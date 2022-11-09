@@ -15,6 +15,11 @@ async function run() {
     const webgoServiceCollecton = client.db('webgo').collection('services')
     const reviewCollection = client.db('webgo').collection('reviews')
     try {
+        app.post('/services', async (req, res) => {
+            const data = req.body;
+            const result = await webgoServiceCollecton.insertOne(data)
+            res.send(result)
+        })
         app.get('/threeServices', async (req, res) => {
             const query = {};
             const cursor = webgoServiceCollecton.find(query);
@@ -36,6 +41,26 @@ async function run() {
         app.post('/review', async (req, res) => {
             const data = req.body;
             const result = await reviewCollection.insertOne(data)
+            res.send(result)
+        })
+        app.get('/review', async (req, res) => {
+            const query = {}
+            const cursor = reviewCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        app.get('/review', async (req, res) => {
+            console.log(req.query)
+            const query = { email: req.query.email }
+            const cursor = reviewCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+        app.get('/review/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { serviceId: id }
+            const review = reviewCollection.find(query)
+            const result = await review.toArray()
             res.send(result)
         })
     }
