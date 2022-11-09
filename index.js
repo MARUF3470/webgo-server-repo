@@ -13,6 +13,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     const webgoServiceCollecton = client.db('webgo').collection('services')
+    const reviewCollection = client.db('webgo').collection('reviews')
     try {
         app.get('/threeServices', async (req, res) => {
             const query = {};
@@ -31,6 +32,11 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const service = await webgoServiceCollecton.findOne(query);
             res.send(service)
+        })
+        app.post('/review', async (req, res) => {
+            const data = req.body;
+            const result = await reviewCollection.insertOne(data)
+            res.send(result)
         })
     }
     finally {
