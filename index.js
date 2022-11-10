@@ -16,6 +16,7 @@ function verifyJWT(req, res, next) {
         return res.status(401).send({ message: 'unauthorized access' });
     }
     const token = authHeader.split(' ')[1];
+    console.log(authHeader)
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
         if (err) {
@@ -87,14 +88,14 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result)
         })
-        app.get('/review/:id', async (req, res) => {
+        app.get('/serviceReview/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { serviceId: id }
             const review = reviewCollection.find(query)
             const result = await review.toArray()
             res.send(result)
         })
-        app.patch('/review/:id', async (req, res) => {
+        app.patch('/review/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const status = req.body.status;
             const query = { _id: ObjectId(id) };
